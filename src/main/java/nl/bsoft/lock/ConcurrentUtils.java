@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 public class ConcurrentUtils {
     private final Logger log = LoggerFactory.getLogger(ConcurrentUtils.class);
 
-    public static void stop(ExecutorService executor) {
+    public void stop(ExecutorService executor) {
         stop(executor, 60);
         /*
         try {
@@ -33,25 +33,26 @@ public class ConcurrentUtils {
         */
     }
 
-    public static void stop(ExecutorService executor, long timeOut) {
+    public void stop(ExecutorService executor, long timeOut) {
         try {
             executor.shutdown();
 
             executor.awaitTermination(timeOut, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            System.err.println("termination interrupted");
+            log.error("termination interrupted");
         } finally {
             if (!executor.isTerminated()) {
-                System.err.println("killing non-finished tasks");
+                log.error("killing non-finished tasks");
             }
             executor.shutdownNow();
         }
     }
 
-    public static void sleep(int seconds) {
+    public void sleep(int seconds) {
         try {
             TimeUnit.SECONDS.sleep(seconds);
         } catch (InterruptedException e) {
+            log.error("Sleep interrupted: {}", e);
             throw new IllegalStateException(e);
         }
     }
